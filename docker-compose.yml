@@ -1,0 +1,49 @@
+version: '3.7'
+
+networks:
+  app:
+    driver: bridge
+
+services:
+  web:
+    image: nginx:stable-alpine
+    container_name: openai-img-generate-webserver
+    ports:
+      - "8018:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - db
+    networks:
+      - app
+
+  backend:
+    container_name: openai-img-generate-backend
+    ports:
+      - "9018:9000"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - app
+
+  db:
+    image: mariadb
+    container_name: openai-img-generate-db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3318:3306"
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=openapi_image
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+    networks:
+      - app
