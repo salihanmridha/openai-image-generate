@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use App\Actions\DownloadFileAction;
 use App\Filament\Resources\GeneratedImageResource\Pages;
 use App\Filament\Resources\GeneratedImageResource\RelationManagers;
 use App\Models\GeneratedImage;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -13,6 +15,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
+use RyanChandler\FilamentProgressColumn\ProgressColumn;
+use Filament\Infolists;
 
 class GeneratedImageResource extends Resource
 {
@@ -46,24 +50,60 @@ class GeneratedImageResource extends Resource
                           ->color(fn(string $state): string => match ($state) {
                               $state => $state,
                           }),
-                TextColumn::make("result")->wrap()->label("Log"),
+                ProgressColumn::make("progress")->poll("5s"),
+                TextColumn::make("result")->wrap()->label("Log")->limit(100),
             ])->defaultSort("created_at", "desc")
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                                            ->options([
                                                'PROCESSING' => 'PROCESSING',
-                                               'COMPLETED' => 'COMPLETED',
-                                               'FAILED' => 'FAILED',
+                                               'COMPLETED'  => 'COMPLETED',
+                                               'FAILED'     => 'FAILED',
                                            ]),
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ViewAction::make(),
+
+                Tables\Actions\Action::make('Download')
+                                     ->action(fn(GeneratedImage $record
+                                     ) => DownloadFileAction::download($record["file_name"]))->icon("heroicon-o-cloud-arrow-down")
+                                                                                             ->color("success"),
+
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make()->schema([
+                    Infolists\Components\Grid::make(2)->schema([
+                        Infolists\Components\TextEntry::make('keyword'),
+                        Infolists\Components\TextEntry::make('status')
+                                                      ->badge()
+                                                      ->color(fn(string $state): string => match ($state) {
+                                                          $state => $state,
+                                                      }),
+                    ]),
+
+                    Infolists\Components\Grid::make(1)->schema([
+                        Infolists\Components\TextEntry::make('prompt'),
+                    ]),
+
+                    Infolists\Components\Grid::make(1)->schema([
+                        Infolists\Components\TextEntry::make('result')->label("Log"),
+                    ]),
+
+                    Infolists\Components\Grid::make(1)->schema([
+                        Infolists\Components\ImageEntry::make('file_name')->label("Image")->width(350)->height(250),
+                    ])
+                ])
             ]);
     }
 
