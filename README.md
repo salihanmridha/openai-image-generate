@@ -1,4 +1,4 @@
-# Project Name - IP management
+# Project Name - Image generate by OpenAI API and DALL E API
 
 ## About the project:
 This image generation application utilizes the OpenAI API, specifically the DALL·E model. Users input keywords to generate unique images, with a history of creations available for review. The system crafts prompts for image creation through OpenAI API requests, storing them in a database. The resulting images are archived in either an S3 bucket or public storage, offering flexibility. Users require an OpenAI key for seamless integration, accessible through the platform's free tier.
@@ -26,11 +26,11 @@ The objective is to build a simple web application to provide this functionality
 
 ### Installation
 - Clone the repository (`https://github.com/salihanmridha/openai-image-generate`) in your project directory.
-- Navigate by your command prompt to the project directory where docker-compose.yml file exist.
+- Navigate by your command prompt to the project directory where **docker-compose.yml** file exist.
 - RUN `docker-compose build && docker-compose up -d` command.
 
 #### Application Installation
-- RUN `docker-compose exec backend cp .env.example .env`
+- RUN `docker-compose exec backend cp .env.docker .env`
 - RUN `docker-compose exec backend composer install`
 - RUN `docker-compose exec backend chmod -R 777 /var/www/html/bootstrap`
 - RUN `docker-compose exec backend chmod -R 777 /var/www/html/storage`
