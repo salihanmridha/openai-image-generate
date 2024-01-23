@@ -38,9 +38,9 @@ The objective is to build a simple web application to provide this functionality
 - RUN `docker-compose exec backend php artisan migrate --seed`
 - RUN `docker-compose exec backend php artisan storage:link`
 - RUN `docker-compose exec backend php artisan queue:work`
-- These commands will create the containers and install the project and run all necessary commands like: composer install, migration, seeder etc.
+- These commands will create the containers and install the project and run all necessary commands like: composer install, migration, seeder, queue etc.
 - If you want to run the applications in different port then please update docker-compose.yml, ./Dockerfile, nginx/default.conf files accordingly. And you might also need to update .env file, if your application not  running on http://localhost:8018
-- ##### Update the `OPENAI_API_KEY` and `OPENAI_ORGANIZATION` in .env file which you copied from .env.example
+- ##### Update the `OPENAI_API_KEY` and `OPENAI_ORGANIZATION` in .env file which you copied from .env.docker
 - Now Ready to go. Go to browser and run the application with http://localhost:8018/admin/. This will take you to filament admin login page.
 
 
