@@ -12,7 +12,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Columns\ImageColumn;
 
 class GeneratedImageResource extends Resource
 {
@@ -28,8 +28,8 @@ class GeneratedImageResource extends Resource
             ->schema([
                 Section::make()->schema([
                     TextInput::make("keyword")
-                    ->required()
-                    ->maxLength(255)
+                             ->required()
+                             ->maxLength(255)
                 ]),
             ]);
     }
@@ -40,17 +40,25 @@ class GeneratedImageResource extends Resource
             ->columns([
                 TextColumn::make("keyword")
                           ->searchable(),
+                ImageColumn::make("file_name")->disk(config('filesystems.default'))->width(150)->height(100)->label("Image"),
                 TextColumn::make("status")
-                ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    $state => $state,
-                }),
-            ])
+                          ->badge()
+                          ->color(fn(string $state): string => match ($state) {
+                              $state => $state,
+                          }),
+                TextColumn::make("result")->wrap()->label("Log"),
+            ])->defaultSort("created_at", "desc")
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                                           ->options([
+                                               'PROCESSING' => 'PROCESSING',
+                                               'COMPLETED' => 'COMPLETED',
+                                               'FAILED' => 'FAILED',
+                                           ]),
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

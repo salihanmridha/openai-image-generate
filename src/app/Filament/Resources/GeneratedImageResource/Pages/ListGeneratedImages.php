@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\GeneratedImageResource\Pages;
 
 use App\Filament\Resources\GeneratedImageResource;
+use App\Jobs\GenerateImageJob;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Model;
 
 class ListGeneratedImages extends ListRecords
 {
@@ -13,7 +15,9 @@ class ListGeneratedImages extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->after(function (Model $record){
+                GenerateImageJob::dispatch($record["keyword"], $record["id"]);
+            }),
         ];
     }
 }

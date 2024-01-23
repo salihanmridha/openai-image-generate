@@ -17,8 +17,9 @@ return new class extends Migration
             $table->enum("status", ["PROCESSING", "COMPLETED", "FAILED"])->default("PROCESSING");
             $table->text("prompt")->nullable();
             $table->string('file_name', 255)->nullable();
-            $table->string('src', 255)->nullable();
-            $table->text('response')->nullable();
+            $table->string('file_path', 255)->nullable();
+            $table->tinyInteger('progress')->default(10);
+            $table->text('result')->nullable();
             $table->timestamps();
         });
     }
