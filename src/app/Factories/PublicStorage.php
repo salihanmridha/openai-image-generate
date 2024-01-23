@@ -16,7 +16,7 @@ class PublicStorage implements StorageInterface
      */
     public function store(string $filename, string $content): bool
     {
-        return Storage::disk('public')->put($filename, $content);
+        return Storage::disk(config('filesystems.default'))->put($filename, $content);
     }
 
     public function getPath(string $filename): ?string
