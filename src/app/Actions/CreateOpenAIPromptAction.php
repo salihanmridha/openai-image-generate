@@ -18,6 +18,8 @@ class CreateOpenAIPromptAction
         return OpenAI::completions()->create([
             'model'  => config('openai.model'),
             'prompt' => $this->imagePrompt . $keyword,
+            'max_tokens' => 150,
+            'temperature' => 0,
         ]);
     }
 }
